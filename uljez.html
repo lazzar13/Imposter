@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>ULJEZ</title>
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Uljez" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Righteous&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:     #E11D48;
+      --red-dim: #9f1239;
+      --pink:    #FB7185;
+      --bg:      #0a0a0f;
+      --bg2:     #12121a;
+      --bg3:     #1a1a26;
+      --border:  #2a2a3a;
+      --text:    #f0f0f8;
+      --muted:   #8888aa;
+      --green:   #22c55e;
+      --yellow:  #facc15;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow: hidden;
+    }
+
+    /* ── SCREENS ── */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
+      padding: 24px 20px 40px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .screen.active { opacity: 1; pointer-events: all; }
+
+    /* ── TYPOGRAPHY ── */
+    .logo {
+      font-family: 'Righteous', cursive;
+      font-size: 3.5rem;
+      color: var(--red);
+      text-shadow: 0 0 20px rgba(225,29,72,0.7), 0 0 40px rgba(225,29,72,0.3);
+      letter-spacing: 4px;
+      line-height: 1;
+    }
+    .logo-sub {
+      font-size: 0.75rem;
+      letter-spacing: 5px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    h2 {
+      font-family: 'Righteous', cursive;
+      font-size: 1.4rem;
+      color: var(--pink);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 16px 20px;
+      border: none; border-radius: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 54px;
+    }
+    .btn-primary {
+      background: var(--red);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(225,29,72,0.4);
+    }
+    .btn-primary:hover { background: #f43f5e; box-shadow: 0 0 30px rgba(225,29,72,0.6); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: var(--bg3);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--pink); color: var(--pink); }
+    .btn-secondary:active { transform: scale(0.97); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .btn-ghost:hover { color: var(--text); }
+
+    .btn-sm {
+      padding: 10px 16px; font-size: 0.85rem; min-height: 44px;
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid var(--red-dim);
+    }
+    .btn-danger:hover { background: rgba(225,29,72,0.1); }
+
+    .btn-green {
+      background: var(--green);
+      color: #000;
+      box-shadow: 0 0 20px rgba(34,197,94,0.3);
+    }
+    .btn-green:hover { background: #16a34a; }
+    .btn-green:active { transform: scale(0.97); }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 20px;
+      width: 100%;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 100%; height: 1px;
+      background: var(--border);
+      margin: 16px 0;
+    }
+
+    /* ── INPUT ── */
+    .input-wrap { position: relative; width: 100%; }
+    .input-wrap input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 48px 14px 16px;
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      min-height: 54px;
+    }
+    .input-wrap input:focus { border-color: var(--red); }
+    .input-wrap input::placeholder { color: var(--muted); }
+    .input-wrap .btn-icon {
+      position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      padding: 8px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s;
+      min-width: 44px; min-height: 44px;
+    }
+    .input-wrap .btn-icon:hover { color: var(--red); }
+
+    /* ── PLAYER LIST ── */
+    .player-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .player-item:last-child { border-bottom: none; }
+    .player-avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--pink); flex-shrink: 0;
+    }
+    .player-name { flex: 1; font-weight: 500; }
+    .remove-btn {
+      background: none; border: none;
+      color: var(--muted); cursor: pointer;
+      padding: 6px; border-radius: 8px;
+      transition: color 0.2s;
+      min-width: 44px; min-height: 44px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .remove-btn:hover { color: var(--red); }
+
+    /* ── WORD REVEAL ── */
+    .big-word {
+      font-family: 'Righteous', cursive;
+      font-size: 2.6rem;
+      text-align: center;
+      line-height: 1.2;
+      padding: 20px;
+    }
+    .big-word.real {
+      color: var(--green);
+      text-shadow: 0 0 20px rgba(34,197,94,0.5);
+    }
+    .big-word.imposter {
+      color: var(--red);
+      text-shadow: 0 0 20px rgba(225,29,72,0.6), 0 0 40px rgba(225,29,72,0.3);
+    }
+    .category-badge {
+      display: inline-block;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ── WORD HIDDEN ── */
+    .word-hidden {
+      background: var(--bg3);
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-bar-wrap {
+      width: 100%; background: var(--bg3);
+      border-radius: 99px; height: 6px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: var(--red);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 8px rgba(225,29,72,0.5);
+    }
+    .step-label { font-size: 0.75rem; color: var(--muted); text-align: right; }
+
+    /* ── TIMER ── */
+    .timer-ring {
+      position: relative;
+      width: 160px; height: 160px;
+      flex-shrink: 0;
+    }
+    .timer-ring svg { transform: rotate(-90deg); }
+    .timer-ring circle { transition: stroke-dashoffset 1s linear; }
+    .timer-number {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Righteous', cursive;
+      font-size: 2.8rem;
+      color: var(--text);
+    }
+    .timer-number.urgent { color: var(--red); text-shadow: 0 0 10px rgba(225,29,72,0.5); }
+
+    /* ── VOTING ── */
+    .vote-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-height: 60px;
+    }
+    .vote-item:hover { border-color: var(--pink); }
+    .vote-item.selected { border-color: var(--red); background: rgba(225,29,72,0.1); }
+    .vote-item.selected .vote-name { color: var(--red); }
+    .vote-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .vote-item.selected .vote-dot {
+      background: var(--red); border-color: var(--red);
+    }
+    .vote-name { flex: 1; font-weight: 500; }
+    .vote-count {
+      font-size: 0.8rem; color: var(--muted);
+      background: var(--bg); border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    /* ── RESULTS ── */
+    .result-reveal {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      width: 100%;
+      text-align: center;
+    }
+    .result-reveal.win { border-color: var(--green); }
+    .result-reveal.lose { border-color: var(--red); }
+    .result-icon { font-size: 3rem; margin-bottom: 8px; }
+    .result-title {
+      font-family: 'Righteous', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 6px;
+    }
+    .result-title.win { color: var(--green); text-shadow: 0 0 15px rgba(34,197,94,0.4); }
+    .result-title.lose { color: var(--red); text-shadow: 0 0 15px rgba(225,29,72,0.4); }
+
+    .vote-result-bar {
+      display: flex; align-items: center; gap: 10px;
+      margin: 6px 0;
+    }
+    .vote-result-bar .bar-name { width: 80px; font-size: 0.85rem; text-align: right; flex-shrink: 0; }
+    .vote-result-bar .bar-track {
+      flex: 1; height: 8px; background: var(--bg3);
+      border-radius: 99px; overflow: hidden;
+    }
+    .vote-result-bar .bar-fill {
+      height: 100%; border-radius: 99px;
+      background: var(--red);
+      transition: width 0.6s ease;
+    }
+    .vote-result-bar .bar-fill.imposter-bar { background: var(--yellow); }
+    .vote-result-bar .bar-val {
+      font-size: 0.8rem; color: var(--muted);
+      width: 20px; flex-shrink: 0;
+    }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block; border-radius: 20px;
+      padding: 3px 12px; font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-red { background: rgba(225,29,72,0.15); color: var(--pink); border: 1px solid var(--red-dim); }
+    .badge-green { background: rgba(34,197,94,0.15); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+
+    /* ── UTILITIES ── */
+    .gap-8  { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .gap-16 { gap: 16px; }
+    .mt-8  { margin-top: 8px; }
+    .mt-12 { margin-top: 12px; }
+    .mt-16 { margin-top: 16px; }
+    .mt-24 { margin-top: 24px; }
+    .mt-32 { margin-top: 32px; }
+    .w-full { width: 100%; }
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .text-center { text-align: center; }
+    .text-muted { color: var(--muted); font-size: 0.85rem; }
+    .text-sm { font-size: 0.85rem; }
+    .font-bold { font-weight: 700; }
+
+    /* ── GLOW LINE ── */
+    .glow-line {
+      width: 60px; height: 2px;
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+      border-radius: 99px;
+      margin: 12px auto;
+    }
+
+    /* ── SETTINGS TOGGLE ── */
+    .toggle-wrap { display: flex; align-items: center; gap: 12px; }
+    .toggle {
+      position: relative; width: 48px; height: 26px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--bg3); border-radius: 99px;
+      border: 1px solid var(--border);
+      cursor: pointer; transition: 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 20px; height: 20px;
+      left: 2px; top: 2px;
+      background: var(--muted); border-radius: 50%;
+      transition: 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--red-dim); border-color: var(--red); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(22px); background: var(--red); }
+
+    /* ── TIMER INPUT ── */
+    .num-input {
+      display: flex; align-items: center; gap: 0;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden;
+    }
+    .num-input button {
+      background: none; border: none; color: var(--muted);
+      font-size: 1.4rem; cursor: pointer;
+      padding: 0 16px; min-height: 48px; min-width: 48px;
+      transition: color 0.2s;
+    }
+    .num-input button:hover { color: var(--red); }
+    .num-input span {
+      flex: 1; text-align: center;
+      font-family: 'Righteous', cursive; font-size: 1.2rem;
+      color: var(--text);
+    }
+
+    /* ── ANIMATE ── */
+    @keyframes pop {
+      0%   { transform: scale(0.7); opacity: 0; }
+      70%  { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .pop { animation: pop 0.35s ease forwards; }
+
+    @keyframes pulse-red {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(225,29,72,0); }
+      50% { box-shadow: 0 0 0 8px rgba(225,29,72,0.15); }
+    }
+    .pulse-red { animation: pulse-red 2s infinite; }
+
+    /* ── COUNTDOWN OVERLAY ── */
+    @keyframes count-pop {
+      0%   { transform: scale(0.4); opacity: 0; }
+      60%  { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #countdown-overlay .count-num {
+      font-family: 'Righteous', cursive;
+      font-size: 8rem;
+      color: var(--red);
+      text-shadow: 0 0 40px rgba(225,29,72,0.8), 0 0 80px rgba(225,29,72,0.4);
+      animation: count-pop 0.4s ease forwards;
+    }
+
+    /* ── CATEGORY CHIPS ── */
+    .cat-grid {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .cat-chip {
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 99px;
+      background: var(--bg3);
+      color: var(--muted);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .cat-chip.selected {
+      border-color: var(--red);
+      background: rgba(225,29,72,0.12);
+      color: var(--pink);
+    }
+    .cat-chip:active { transform: scale(0.95); }
+    .cat-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .cat-actions button {
+      background: none; border: none;
+      color: var(--muted); font-size: 0.78rem;
+      cursor: pointer; padding: 4px 0;
+      text-decoration: underline;
+      font-family: 'Poppins', sans-serif;
+    }
+    .cat-actions button:hover { color: var(--pink); }
+
+    /* ── SCOREBOARD ── */
+    .score-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
+    .score-wins { color: var(--green); font-size: 0.85rem; font-weight: 600; min-width: 50px; text-align: center; }
+    .score-losses { color: var(--red); font-size: 0.85rem; font-weight: 600; min-width: 50px; text-align: center; }
+
+    /* ── VOTE DETAIL COLLAPSIBLE ── */
+    #vote-detail-list {
+      display: none;
+      margin-top: 10px;
+    }
+    .vote-detail-row {
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .vote-detail-row:last-child { border-bottom: none; }
+    .vote-detail-row strong { color: var(--text); }
+
+    /* ── SCROLL CUSTOM ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+    /* ── SCREEN-SPECIFIC ── */
+    #screen-home { justify-content: center; gap: 0; }
+    #screen-home .home-content { display: flex; flex-direction: column; align-items: center; gap: 0; width: 100%; }
+
+    .settings-section { width: 100%; max-width: 400px; }
+
+    .pass-phone-wrap {
+      width: 100%; text-align: center;
+      padding: 32px 20px;
+    }
+    .phone-icon {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(225,29,72,0.1);
+      border: 2px solid var(--red-dim);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .discussion-hint {
+      background: var(--bg3);
+      border-left: 3px solid var(--yellow);
+      border-radius: 0 10px 10px 0;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      width: 100%;
+      line-height: 1.5;
+    }
+
+    .max-w { max-width: 420px; width: 100%; }
+    .screen > .max-w { margin: 0 auto; }
+
+    /* ── RESTART BUTTON ── */
+    #restart-fab {
+      position: fixed;
+      top: 16px; right: 16px;
+      z-index: 500;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      display: none;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #restart-fab:hover { border-color: var(--red); color: var(--red); }
+
+    /* ── RESTART MODAL ── */
+    #restart-modal {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.75);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    #restart-modal.open { display: flex; }
+    .restart-modal-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      width: 100%; max-width: 340px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════
+     RESTART FAB
+════════════════════════════════════ -->
+<button id="restart-fab" onclick="openRestartModal()" aria-label="Restart igre">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+</button>
+
+<!-- ════════════════════════════════════
+     RESTART MODAL
+════════════════════════════════════ -->
+<div id="restart-modal">
+  <div class="restart-modal-box">
+    <div style="font-size:2rem;margin-bottom:12px">🏠</div>
+    <div style="font-family:'Righteous',cursive;font-size:1.2rem;color:var(--pink);margin-bottom:8px">Napusti igru?</div>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:24px">Trenutna igra će biti prekinuta i vratiće te na početni ekran.</p>
+    <div class="flex flex-col gap-8">
+      <button class="btn btn-danger" onclick="confirmRestart()">Da, idi na početni ekran</button>
+      <button class="btn btn-ghost" onclick="closeRestartModal()">Nastavi igru</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     COUNTDOWN OVERLAY
+════════════════════════════════════ -->
+<div id="countdown-overlay" style="position:fixed;inset:0;z-index:999;background:#0a0a0f;display:none;align-items:center;justify-content:center;">
+  <div class="count-num" id="count-num-display">3</div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 1 — HOME
+════════════════════════════════════ -->
+<div id="screen-home" class="screen active">
+  <div class="home-content max-w">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="88" height="88" style="margin-bottom:4px">
+      <defs>
+        <filter id="eye-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="ring-glow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- Outer glow ring -->
+      <circle cx="40" cy="40" r="37" fill="none" stroke="#E11D48" stroke-width="1" opacity="0.35" filter="url(#ring-glow)"/>
+      <!-- Background circle -->
+      <circle cx="40" cy="40" r="36" fill="#12121a" stroke="#E11D48" stroke-width="1.2" opacity="0.6"/>
+      <!-- Hood / cloak body -->
+      <path d="M40 9 C23 9 13 22 13 35 C13 45 18 52 26 57 L21 68 L59 68 L54 57 C62 52 67 45 67 35 C67 22 57 9 40 9Z" fill="#1c1c28"/>
+      <path d="M40 9 C23 9 13 22 13 35 C13 45 18 52 26 57 L21 68 L59 68 L54 57 C62 52 67 45 67 35 C67 22 57 9 40 9Z" fill="none" stroke="#E11D48" stroke-width="1" opacity="0.4"/>
+      <!-- Face shadow (dark void inside hood) -->
+      <ellipse cx="40" cy="37" rx="15" ry="16" fill="#07070f"/>
+      <!-- Eyes glow -->
+      <ellipse cx="33.5" cy="35" rx="5" ry="4" fill="#E11D48" filter="url(#eye-glow)"/>
+      <ellipse cx="46.5" cy="35" rx="5" ry="4" fill="#E11D48" filter="url(#eye-glow)"/>
+      <!-- Eye pupils -->
+      <ellipse cx="33.5" cy="35" rx="2.2" ry="2.2" fill="#FB7185"/>
+      <ellipse cx="46.5" cy="35" rx="2.2" ry="2.2" fill="#FB7185"/>
+    </svg>
+    <div class="logo">ULJEZ</div>
+    <div class="logo-sub">Igra obmane</div>
+    <div class="glow-line"></div>
+
+    <p class="subtitle mt-8" style="max-width:280px;">
+      Svako dobija tajnu reč — osim jednog igrača koji dobija samo <strong style="color:var(--red)">ULJEZ</strong>.
+    </p>
+
+    <div class="mt-32 w-full flex flex-col gap-12">
+      <button class="btn btn-primary pulse-red" onclick="goTo('screen-setup')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Nova igra
+      </button>
+      <button class="btn btn-secondary" onclick="goTo('screen-rules')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8h.01M11 12h1v4h1"/></svg>
+        Pravila igre
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 2 — RULES
+════════════════════════════════════ -->
+<div id="screen-rules" class="screen flex-col" style="gap:0">
+  <div class="max-w flex flex-col" style="gap:0; width:100%">
+    <button class="btn btn-ghost" style="align-self:flex-start;padding-left:0" onclick="goTo('screen-home')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Nazad
+    </button>
+
+    <h2 class="mt-16">Kako se igra?</h2>
+    <div class="glow-line"></div>
+
+    <div class="flex flex-col gap-12 mt-16 w-full">
+      <div class="card">
+        <div class="flex items-center gap-12">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(225,29,72,0.15);border:1px solid var(--red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Righteous',cursive;color:var(--pink)">1</div>
+          <div>
+            <div class="font-bold">Unesi igrače</div>
+            <div class="text-muted">Dodaj imena svih igrača (min. 3)</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="flex items-center gap-12">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(225,29,72,0.15);border:1px solid var(--red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Righteous',cursive;color:var(--pink)">2</div>
+          <div>
+            <div class="font-bold">Tajno gledanje</div>
+            <div class="text-muted">Svaki igrač privatno gleda svoju reč — ostali gledaju na drugu stranu</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="flex items-center gap-12">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(225,29,72,0.15);border:1px solid var(--red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Righteous',cursive;color:var(--pink)">3</div>
+          <div>
+            <div class="font-bold">Diskusija</div>
+            <div class="text-muted">Opišite reč bez da je direktno kažete. Uljez mora da se pretvara da zna!</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="flex items-center gap-12">
+          <div style="width:36px;height:36px;border-radius:50%;background:rgba(225,29,72,0.15);border:1px solid var(--red-dim);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Righteous',cursive;color:var(--pink)">4</div>
+          <div>
+            <div class="font-bold">Glasanje</div>
+            <div class="text-muted">Ko je uljez? Svi glasaju, a onda se otkriva istina!</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="border-color:var(--red-dim);background:rgba(225,29,72,0.05)">
+        <div class="font-bold" style="color:var(--pink);margin-bottom:8px">Kada uljez pobedi?</div>
+        <div class="text-muted" style="font-size:0.9rem">Uljez pobeđuje ako igrači pogrešno glasaju, ili ako uljez pogodi tajnu reč pre otkrivanja.</div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary mt-24" onclick="goTo('screen-setup')">Počni igru</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 3 — SETUP (IGRAČI)
+════════════════════════════════════ -->
+<div id="screen-setup" class="screen flex-col" style="gap:0">
+  <div class="max-w flex flex-col" style="gap:0;width:100%">
+    <button class="btn btn-ghost" style="align-self:flex-start;padding-left:0" onclick="goTo('screen-home')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Nazad
+    </button>
+
+    <h2 class="mt-16">Igrači</h2>
+    <p class="subtitle">Dodaj igrače (minimum 3)</p>
+    <div class="glow-line"></div>
+
+    <!-- Add player input -->
+    <div class="input-wrap mt-16 w-full">
+      <input id="player-input" type="text" placeholder="Ime igrača..." maxlength="20"
+        onkeydown="if(event.key==='Enter')addPlayer()" autocomplete="off" autocorrect="off" spellcheck="false" />
+      <button class="btn-icon" onclick="addPlayer()" aria-label="Dodaj igrača">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+
+    <!-- Player list -->
+    <div id="player-list" class="card mt-16 w-full" style="padding:12px 16px; min-height:60px;">
+      <div id="player-list-empty" class="text-muted text-center text-sm" style="padding:12px 0">
+        Još nema igrača. Dodaj ih gore.
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="card mt-16 w-full">
+      <div class="font-bold" style="color:var(--pink);margin-bottom:14px;font-size:0.9rem;letter-spacing:1px;text-transform:uppercase">Podešavanja</div>
+
+      <!-- 1. Tajmer -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Tajmer za diskusiju</div>
+          <div class="text-muted">Odbrojavaj vreme za raspravu</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="timer-toggle" onchange="updateTimerVis()" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div id="timer-setting" class="mt-12" style="display:none">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-muted">Trajanje (sekunde)</span>
+          <div class="num-input">
+            <button onclick="changeTimer(-15)" aria-label="Smanji">−</button>
+            <span id="timer-val">60</span>
+            <button onclick="changeTimer(+15)" aria-label="Povećaj">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 2. Zvuk -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Zvuk</div>
+          <div class="text-muted">Zvučni efekti tokom igre</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="sound-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 2b. Odbrojavanje -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Odbrojavanje</div>
+          <div class="text-muted">Prikaži 3-2-1 pre otkrivanja reči</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="countdown-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 3. Broj uljeza -->
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Broj uljeza</div>
+          <div class="text-muted">Koliko uljeza ima u igri</div>
+        </div>
+        <div class="num-input">
+          <button onclick="changeImpostorCount(-1)" aria-label="Smanji">−</button>
+          <span id="impostor-count-val">1</span>
+          <button onclick="changeImpostorCount(+1)" aria-label="Povećaj">+</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 4. Nasumičan redosled -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Nasumičan redosled</div>
+          <div class="text-muted">Promeša redosled otkrivanja reči</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="shuffle-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 5. Hint za uljeza -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Hint za uljeza</div>
+          <div class="text-muted">Uljez vidi prvo slovo reči</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="hint-toggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 6. Kategorije -->
+      <div>
+        <div class="font-bold" style="font-size:0.9rem">Kategorije</div>
+        <div class="text-muted" style="font-size:0.8rem;margin-bottom:10px">Bira se samo iz označenih kategorija</div>
+        <div class="cat-grid" id="cat-grid"></div>
+        <div class="cat-actions">
+          <button onclick="selectAllCats()">Sve</button>
+          <button onclick="deselectAllCats()">Ništa</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- 7. Uljez može da pogodi -->
+      <div class="toggle-wrap justify-between">
+        <div>
+          <div class="font-bold" style="font-size:0.9rem">Uljez može da pogodi</div>
+          <div class="text-muted">Uljez pobedi ako pogodi reč</div>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="guess-toggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <button id="start-btn" class="btn btn-primary mt-24 w-full" onclick="startGame()" disabled style="opacity:0.4">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      Počni igru
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 4 — DAJI TELEFON (pass phone)
+════════════════════════════════════ -->
+<div id="screen-pass" class="screen flex-col items-center justify-center" style="gap:0">
+  <div class="max-w flex flex-col items-center text-center w-full" style="gap:0">
+    <div class="pass-phone-wrap">
+      <div class="phone-icon">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3"/></svg>
+      </div>
+      <div class="progress-bar-wrap w-full mt-8">
+        <div class="progress-bar-fill" id="pass-progress" style="width:0%"></div>
+      </div>
+      <div class="step-label mt-8" id="pass-step-label"></div>
+
+      <h2 class="mt-16" id="pass-player-name" style="font-size:1.8rem"></h2>
+      <p class="subtitle mt-8">Uzmi telefon i pritisni dugme kada si spreman. Ostali gledaju na drugu stranu.</p>
+
+      <button class="btn btn-primary mt-24 w-full" onclick="showWordWithCountdown()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        Prikaži moju reč
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 5 — TAJNA REČ (word reveal)
+════════════════════════════════════ -->
+<div id="screen-word" class="screen flex-col items-center justify-center" style="gap:0">
+  <div class="max-w flex flex-col items-center text-center w-full" style="gap:0">
+    <div id="word-player-name" style="color:var(--muted);font-size:0.85rem;letter-spacing:2px;text-transform:uppercase"></div>
+
+    <div id="word-category-badge" class="category-badge mt-8"></div>
+
+    <div class="word-hidden mt-24 pop" id="word-reveal-box">
+      <div id="word-text" class="big-word"></div>
+      <div id="word-hint" class="text-muted mt-8" style="font-size:0.85rem"></div>
+    </div>
+
+    <button class="btn btn-secondary mt-24 w-full" onclick="hideWord()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      Zapamtio/la sam, sakrij reč
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 6 — DISKUSIJA
+════════════════════════════════════ -->
+<div id="screen-discussion" class="screen flex-col items-center" style="gap:0">
+  <div class="max-w flex flex-col items-center w-full" style="gap:0">
+    <h2 class="mt-8">Diskusija</h2>
+    <p class="subtitle">Razgovarajte o tajnoj reči!</p>
+    <div class="glow-line"></div>
+
+    <!-- Timer (conditional) -->
+    <div id="timer-wrap" class="mt-16 flex-col items-center" style="display:none;width:100%">
+      <div class="timer-ring">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="68" fill="none" stroke="var(--bg3)" stroke-width="10"/>
+          <circle id="timer-circle" cx="80" cy="80" r="68" fill="none"
+            stroke="var(--red)" stroke-width="10"
+            stroke-dasharray="427" stroke-dashoffset="0"
+            stroke-linecap="round"/>
+        </svg>
+        <div class="timer-number" id="timer-display">60</div>
+      </div>
+      <div class="flex gap-12 mt-12">
+        <button class="btn btn-secondary btn-sm" onclick="toggleTimer()" id="timer-pause-btn" style="width:100px">
+          <svg id="timer-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          Pauza
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="resetTimer()" style="width:100px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Resetuj
+        </button>
+      </div>
+    </div>
+
+    <!-- Hints -->
+    <div class="flex flex-col gap-8 mt-16 w-full">
+      <div class="discussion-hint">
+        <strong style="color:var(--yellow)">Pravilo:</strong> Opisujte reč ali je ne izgovarajte direktno. Uljez mora da se pretvara!
+      </div>
+      <div class="discussion-hint">
+        <strong style="color:var(--yellow)">Savet:</strong> Postavljajte pitanja, tražite opise, tražite primere. Posmatrajte ko izgleda nesigurno.
+      </div>
+    </div>
+
+    <!-- Ko počinje diskusiju -->
+    <div class="card mt-16 w-full" style="border-color:var(--yellow);background:rgba(250,204,21,0.05);text-align:center">
+      <div class="text-muted text-sm" style="letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Počinje diskusiju</div>
+      <div id="discussion-starter" style="font-family:'Righteous',cursive;font-size:1.6rem;color:var(--yellow);text-shadow:0 0 14px rgba(250,204,21,0.5)"></div>
+    </div>
+
+    <!-- Igrači lista -->
+    <div class="card mt-12 w-full">
+      <div class="text-muted text-sm" style="margin-bottom:10px;letter-spacing:1px;text-transform:uppercase">Igrači u igri</div>
+      <div id="discussion-players"></div>
+    </div>
+
+    <button class="btn btn-primary mt-24 w-full" onclick="goToVoting()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Glasaj ko je uljez
+    </button>
+    <button class="btn btn-ghost mt-8 w-full" onclick="skipVoting()">
+      Preskoči glasanje — otkrij uljeza
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 7 — GLASANJE
+════════════════════════════════════ -->
+<div id="screen-voting" class="screen flex-col" style="gap:0">
+  <div class="max-w flex flex-col w-full" style="gap:0">
+    <h2 class="mt-8">Glasanje</h2>
+    <p class="subtitle" id="voting-subtitle">Ko je po tvom mišljenju uljez?</p>
+    <div class="glow-line"></div>
+
+    <div class="text-muted text-sm mt-16" id="voting-round-label"></div>
+    <div id="voting-list" class="flex flex-col gap-8 mt-8 w-full"></div>
+
+    <div id="voting-action" class="mt-24 w-full"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 8 — IMPOSTER POGADJANJE
+════════════════════════════════════ -->
+<div id="screen-guess" class="screen flex-col items-center justify-center" style="gap:0">
+  <div class="max-w flex flex-col items-center text-center w-full" style="gap:0">
+    <div style="width:80px;height:80px;border-radius:50%;background:rgba(225,29,72,0.1);border:2px solid var(--red-dim);display:flex;align-items:center;justify-content:center;margin:0 auto">
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+    </div>
+
+    <h2 class="mt-16" style="font-size:1.6rem">Uljez je otkriven!</h2>
+    <p class="subtitle mt-8">Igrači su glasali za tebe kao uljeza. Možeš da pobediš ako pogodišeš tajnu reč!</p>
+
+    <div class="card mt-24 w-full" style="border-color:var(--red-dim)">
+      <div class="text-muted text-sm" style="margin-bottom:10px">Kategorija tajne reči:</div>
+      <div id="guess-category" class="font-bold" style="color:var(--pink);font-size:1.1rem"></div>
+    </div>
+
+    <div class="input-wrap mt-16 w-full">
+      <input id="guess-input" type="text" placeholder="Unesi svoju pretpostavku..."
+        autocomplete="off" autocorrect="off" spellcheck="false"
+        onkeydown="if(event.key==='Enter')submitGuess()" />
+      <button class="btn-icon" onclick="submitGuess()" aria-label="Potvrdi">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <button class="btn btn-primary mt-12 w-full" onclick="submitGuess()">Pogodi!</button>
+    <button class="btn btn-ghost mt-8 w-full" onclick="endGame(false)">Preskočim pogađanje</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SCREEN 9 — REZULTATI
+════════════════════════════════════ -->
+<div id="screen-results" class="screen flex-col" style="gap:0">
+  <div class="max-w flex flex-col w-full" style="gap:0">
+    <h2 class="mt-8">Rezultati</h2>
+    <div class="glow-line"></div>
+
+    <!-- Outcome card -->
+    <div id="result-outcome" class="result-reveal mt-16 pop"></div>
+
+    <!-- Vote breakdown -->
+    <div id="result-votes-card" class="card mt-16 w-full">
+      <div class="text-muted text-sm" style="margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">Raspored glasova</div>
+      <div id="vote-breakdown"></div>
+
+      <!-- Ko je glasao za koga collapsible -->
+      <div class="mt-12">
+        <button class="btn btn-ghost btn-sm w-full" style="font-size:0.82rem;color:var(--muted);padding:8px 0" onclick="toggleVoteDetail()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          Ko je glasao za koga?
+        </button>
+        <div id="vote-detail-list"></div>
+      </div>
+    </div>
+
+    <!-- Word reveal -->
+    <div class="card mt-12 w-full" style="border-color:rgba(34,197,94,0.3)">
+      <div class="flex justify-between items-center">
+        <span class="text-muted text-sm">Tajna reč je bila:</span>
+        <span id="result-word" class="font-bold" style="color:var(--green);font-size:1.1rem"></span>
+      </div>
+      <div class="flex justify-between items-center mt-8">
+        <span class="text-muted text-sm">Kategorija:</span>
+        <span id="result-category" class="text-sm" style="color:var(--muted)"></span>
+      </div>
+      <div class="flex justify-between items-center mt-8">
+        <span class="text-muted text-sm">Uljezi su bili:</span>
+        <span id="result-imposter" class="font-bold" style="color:var(--red)"></span>
+      </div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div id="result-scoreboard-card" class="card mt-12 w-full">
+      <div class="text-muted text-sm" style="margin-bottom:12px;letter-spacing:1px;text-transform:uppercase">Skor tabla</div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;padding:0 0 6px;border-bottom:1px solid var(--border)">
+        <span class="text-sm text-muted" style="flex:1">Igrač</span>
+        <span class="text-sm text-muted" style="min-width:50px;text-align:center">Pobede</span>
+        <span class="text-sm text-muted" style="min-width:50px;text-align:center">Porazi</span>
+      </div>
+      <div id="scoreboard-list"></div>
+    </div>
+
+    <!-- Buttons -->
+    <button class="btn btn-primary mt-24 w-full" onclick="playAgainSamePlayers()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+      Ponovi s istim igračima
+    </button>
+    <button class="btn btn-secondary mt-8 w-full" onclick="newGameNewPlayers()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Nova igra (novi igrači)
+    </button>
+    <button class="btn btn-ghost mt-4 w-full" onclick="goTo('screen-home')">Početna</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════ -->
+<script>
+'use strict';
+
+// ─── WORD DATABASE ───────────────────────────────────────────
+const WORDS = {
+  'Voće': [
+    'jabuka','banana','jagoda','grožđe','lubenica','narandža','kivi','mango',
+    'breskva','šljiva','kruška','trešnja','smokva','nar','limun','dinja',
+    'grejpfrut','ananas','kajsija','malina','kupina','borovnica','urma',
+    'nektarina','papaja',
+  ],
+  'Povrće': [
+    'paradajz','krastavac','šargarepa','paprika','krompir','luk','kupus',
+    'cvekla','celer','praziluk','spanać','tikva','patlidžan','brokola',
+    'karfiol','grašak','boranija','rotkva','rotkvica','peršun','korabica',
+    'kelj','kukuruz','artičoka','bamija',
+  ],
+  'Sport': [
+    'fudbal','košarka','tenis','plivanje','atletika','gimnastika','boks',
+    'karate','odbojka','hokej','biciklizam','rvanje','džudo','rukomet',
+    'badminton','skijanje','streljaštvo','veslanje','kuglanje','stoni tenis',
+    'golf','jahanje','triatlon','ragbi','vaterpolo',
+  ],
+  'Životinje': [
+    'pas','mačka','lav','tigar','slon','žirafa','pingvin','delfin','orao',
+    'vuk','medved','lisica','zec','konj','krokodil','majmun','zebra',
+    'nosorog','nilski konj','klokan','panda','deva','papagaj','sova','jež',
+  ],
+  'Hrana': [
+    'palačinka','sendvič','sladoled','torta','pita','burek','ćevapi',
+    'musaka','sarma','gibanica','baklava','roštilj','podvarak','ajvar',
+    'kajmak','krofna','kifla','punjene paprike','popara','proja',
+    'pasulj','čorba','gulaš','raznjici','lepinja',
+  ],
+  'Instrumenti': [
+    'gitara','klavir','violina','bubnjevi','flauta','saksofon','truba',
+    'harmonika','harfa','kontrabas','mandolina','ukulele','klarinet',
+    'tuba','čelo','oboja','fagot','banjo','gajde','kastanjete',
+    'tamburica','triangl','marimba','lira','sintisajzer',
+  ],
+  'Profesije': [
+    'doktor','učitelj','policajac','vatrogasac','pilot','kuvar','pravnik',
+    'inženjer','glumac','novinar','programer','arhitekta','frizer',
+    'mornar','muzičar','stomatolog','vozač','sudija','sveštenik',
+    'fizičar','prevodilac','ekonomista','psiholog','farmer','veterinar',
+  ],
+  'Prevoz': [
+    'auto','voz','avion','brod','bicikl','autobus','helikopter','traktor',
+    'podmornica','tramvaj','taksi','motocikl','skuter','kajak',
+    'vazdušni balon','jedrilica','karavan','trotinet','džip','gondola',
+    'sanke','gumeni čamac','svemirski brod','feldbicikl','kombajn',
+  ],
+  'Priroda': [
+    'planina','reka','more','šuma','pustinja','jezero','vulkan','kanjon',
+    'livada','gejzir','pećina','klisura','slap','delta','fjord','močvara',
+    'ostrvo','greben','prerija','stepa','tundra','zaliv','rt','brdo','dolina',
+  ],
+  'Mesta': [
+    'škola','bolnica','biblioteka','tržni centar','park','muzej','stadion',
+    'pozorište','bioskop','plaža','crkva','tvrđava','aerodrom','hotel',
+    'restoran','kafić','pekara','apoteka','banka','pošta',
+    'fabrika','policijska stanica','zoo vrt','prodavnica','saobraćajni krug',
+  ],
+  'Oblačenje': [
+    'majica','farmerke','haljina','jakna','cipele','čarape','šešir',
+    'kravata','dukserica','prsluk','čizme','sandale','kaput','rukavice',
+    'šal','bermude','suknja','mantil','džemper','bluza',
+    'trenerka','kostim','kombinzon','ogrtač','kapa',
+  ],
+  'Tehnologija': [
+    'telefon','laptop','tablet','televizor','kamera','mikrofon','zvučnik',
+    'slušalice','štampač','robot','dron','pametni sat','igraća konzola',
+    'projektor','frižider','veš mašina','usisivač','klima uređaj',
+    'mikser','fen za kosu','punjač','tastatura','miš','monitor','ruter',
+  ],
+  'Muzika': [
+    'rok','pop','džez','klasična muzika','hip-hop','elektronska','folk',
+    'opera','bluz','metal','soul','punk','turbofolk','sevdah','disko',
+    'tehno','rap','etno','trubači','rege','bard','novokomponovana',
+    'country','latino','house',
+  ],
+  'Filmovi': [
+    'akcija','horor','komedija','drama','animacija','triler',
+    'naučna fantastika','romantika','vestern','dokumentarac','mjuzikl',
+    'fantazija','avantura','kriminalistički','biografski','istorijski',
+    'epski','psihološki','sportski','porodični','ratni','špijonski',
+    'satirični','noir','katastrofalni',
+  ],
+  'Godišnja doba': [
+    'proleće','leto','jesen','zima',
+  ],
+  'Boje': [
+    'crvena','plava','zelena','žuta','narandžasta','ljubičasta','roza',
+    'smeđa','bela','crna','siva','zlatna','srebrna','tirkizna','bež',
+    'teget','bordo','maslinasta','krem','indigo','oker','lavanda',
+    'koraljna','menta','lila',
+  ],
+  'Emocije': [
+    'sreća','tuga','ljutnja','strah','iznenađenje','gađenje','ljubav',
+    'zavist','ponos','stid','krivica','čežnja','nada','očaj','dosada',
+    'uzbuđenje','nervoza','ljubomora','zahvalnost','ushićenje',
+    'zbunjenost','ravnodušnost','oduševljenje','anksioznost','nostalgija',
+  ],
+  'Domaćinstvo': [
+    'krevet','sto','stolica','sofa','frižider','šporet','lavabo',
+    'ogledalo','tepih','zavesa','lampa','polica','orman','vaza',
+    'jastuk','ćebe','čaša','tanjir','šerpa','tiganj',
+    'metla','usisivač','peškir','sapun','sveća',
+  ],
+  'Srbija': [
+    'Beograd','Novi Sad','Niš','Kragujevac','Subotica','Zrenjanin',
+    'Čačak','Kruševac','Vranje','Šabac','Leskovac','Užice',
+    'Smederevo','Valjevo','Pančevo','Kikinda','Sremska Mitrovica',
+    'Pirot','Požarevac','Prokuplje',
+  ],
+};
+
+const CATEGORY_KEYS = Object.keys(WORDS);
+
+// ─── CATEGORY SELECTION UI ───────────────────────────────────
+let selectedCategories = new Set(CATEGORY_KEYS);
+
+function renderCatGrid() {
+  const grid = document.getElementById('cat-grid');
+  grid.innerHTML = '';
+  CATEGORY_KEYS.forEach(cat => {
+    const chip = document.createElement('button');
+    chip.className = 'cat-chip' + (selectedCategories.has(cat) ? ' selected' : '');
+    chip.textContent = cat;
+    chip.onclick = () => toggleCat(cat, chip);
+    grid.appendChild(chip);
+  });
+}
+
+function toggleCat(cat, chip) {
+  if (selectedCategories.has(cat)) {
+    if (selectedCategories.size === 1) return; // min 1 kategorija
+    selectedCategories.delete(cat);
+    chip.classList.remove('selected');
+  } else {
+    selectedCategories.add(cat);
+    chip.classList.add('selected');
+  }
+}
+
+function selectAllCats() {
+  selectedCategories = new Set(CATEGORY_KEYS);
+  renderCatGrid();
+}
+
+function deselectAllCats() {
+  selectedCategories = new Set([CATEGORY_KEYS[0]]); // min 1
+  renderCatGrid();
+}
+
+// Inicijalizuj grid kad se stranica učita
+document.addEventListener('DOMContentLoaded', renderCatGrid);
+
+// ─── STATE ────────────────────────────────────────────────────
+let state = {
+  players:          [],
+  timerEnabled:     false,
+  timerDuration:    60,
+  guessEnabled:     true,
+  soundEnabled:     true,
+  shuffleEnabled:   true,
+  hintEnabled:      false,
+  countdownEnabled: true,
+  impostorCount:    1,
+
+  // runtime
+  secretWord:       '',
+  category:         '',
+  imposterIdxs:     [],   // array of imposter indices (into players array)
+  revealOrder:      [],   // shuffled (or not) array of player names for reveal
+  currentReveal:    0,
+  votes:            {},   // { playerName: voterName[] }
+  currentVoter:     0,
+  scores:           {},   // { playerName: { pobede: N, porazi: N } }
+
+  timerInterval:    null,
+  timerLeft:        0,
+  timerPaused:      false,
+};
+
+// ─── WEB AUDIO ───────────────────────────────────────────────
+let audioCtx = null;
+
+function ensureAudioCtx() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+}
+
+function playSound(type) {
+  if (!state.soundEnabled) return;
+  ensureAudioCtx();
+  if (!audioCtx) return;
+
+  const now = audioCtx.currentTime;
+
+  function beep(freq1, freq2, duration, gain) {
+    try {
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(freq1, now);
+      if (freq2 !== freq1) osc.frequency.linearRampToValueAtTime(freq2, now + duration);
+      gainNode.gain.setValueAtTime(gain, now);
+      gainNode.gain.linearRampToValueAtTime(0, now + duration);
+      osc.start(now);
+      osc.stop(now + duration);
+    } catch(e) {}
+  }
+
+  switch(type) {
+    case 'reveal':
+      beep(440, 880, 0.15, 0.3);
+      break;
+    case 'tick':
+      beep(800, 800, 0.05, 0.2);
+      break;
+    case 'timerEnd':
+      beep(400, 200, 0.4, 0.35);
+      break;
+    case 'win':
+      beep(523, 523, 0.15, 0.3);
+      setTimeout(() => { if (state.soundEnabled && audioCtx) beep(659, 659, 0.15, 0.3); }, 180);
+      break;
+    case 'lose':
+      beep(400, 400, 0.2, 0.3);
+      setTimeout(() => { if (state.soundEnabled && audioCtx) beep(300, 300, 0.2, 0.3); }, 240);
+      break;
+  }
+}
+
+// Initialize audio context on first user interaction
+document.addEventListener('touchstart', ensureAudioCtx, { once: true, passive: true });
+document.addEventListener('click', ensureAudioCtx, { once: true });
+
+// ─── NAVIGATION ──────────────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).scrollTop = 0;
+  updateRestartFab();
+}
+
+// ─── SETUP: PLAYERS ──────────────────────────────────────────
+function addPlayer() {
+  const input = document.getElementById('player-input');
+  const name = input.value.trim();
+  if (!name) return;
+  if (state.players.includes(name)) {
+    input.value = '';
+    return;
+  }
+  state.players.push(name);
+  input.value = '';
+  renderPlayerList();
+  input.focus();
+}
+
+function removePlayer(idx) {
+  state.players.splice(idx, 1);
+  renderPlayerList();
+}
+
+function renderPlayerList() {
+  const list = document.getElementById('player-list');
+  const empty = document.getElementById('player-list-empty');
+  const startBtn = document.getElementById('start-btn');
+
+  if (state.players.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    startBtn.disabled = true;
+    startBtn.style.opacity = '0.4';
+    return;
+  }
+
+  list.innerHTML = '';
+  state.players.forEach((name, i) => {
+    const initials = name.slice(0,2).toUpperCase();
+    const div = document.createElement('div');
+    div.className = 'player-item';
+    div.innerHTML = `
+      <div class="player-avatar">${initials}</div>
+      <div class="player-name">${escHtml(name)}</div>
+      <button class="remove-btn" onclick="removePlayer(${i})" aria-label="Ukloni">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>`;
+    list.appendChild(div);
+  });
+
+  if (state.players.length >= 3) {
+    startBtn.disabled = false;
+    startBtn.style.opacity = '1';
+  } else {
+    startBtn.disabled = true;
+    startBtn.style.opacity = '0.4';
+  }
+}
+
+function updateTimerVis() {
+  const on = document.getElementById('timer-toggle').checked;
+  document.getElementById('timer-setting').style.display = on ? 'block' : 'none';
+}
+
+function changeTimer(delta) {
+  const el = document.getElementById('timer-val');
+  let val = parseInt(el.textContent) + delta;
+  val = Math.max(15, Math.min(300, val));
+  el.textContent = val;
+}
+
+function changeImpostorCount(delta) {
+  const el = document.getElementById('impostor-count-val');
+  let val = parseInt(el.textContent) + delta;
+  const maxImpostors = Math.min(3, Math.max(1, Math.floor(state.players.length / 3)));
+  val = Math.max(1, Math.min(3, val));
+  el.textContent = val;
+}
+
+// ─── START GAME ───────────────────────────────────────────────
+function startGame() {
+  if (state.players.length < 3) return;
+
+  state.timerEnabled  = document.getElementById('timer-toggle').checked;
+  state.timerDuration = parseInt(document.getElementById('timer-val').textContent);
+  state.guessEnabled  = document.getElementById('guess-toggle').checked;
+  state.soundEnabled     = document.getElementById('sound-toggle').checked;
+  state.shuffleEnabled   = document.getElementById('shuffle-toggle').checked;
+  state.hintEnabled      = document.getElementById('hint-toggle').checked;
+  state.countdownEnabled = document.getElementById('countdown-toggle').checked;
+
+  // Clamp impostor count
+  const rawCount = parseInt(document.getElementById('impostor-count-val').textContent);
+  const maxImpostors = Math.min(3, Math.max(1, Math.floor(state.players.length / 3)));
+  state.impostorCount = Math.max(1, Math.min(maxImpostors, rawCount));
+  // Update display
+  document.getElementById('impostor-count-val').textContent = state.impostorCount;
+
+  // Pick word & category (from selected categories only)
+  const available = [...selectedCategories];
+  const catKey = available[Math.floor(Math.random() * available.length)];
+  const wordList = WORDS[catKey];
+  state.category   = catKey;
+  state.secretWord = wordList[Math.floor(Math.random() * wordList.length)];
+
+  // Pick N random unique imposter indices
+  const indices = Array.from({length: state.players.length}, (_, i) => i);
+  shuffleArray(indices);
+  state.imposterIdxs = indices.slice(0, state.impostorCount);
+
+  // Build reveal order
+  if (state.shuffleEnabled) {
+    const orderIndices = Array.from({length: state.players.length}, (_, i) => i);
+    shuffleArray(orderIndices);
+    state.revealOrder = orderIndices.map(i => state.players[i]);
+  } else {
+    state.revealOrder = [...state.players];
+  }
+
+  state.currentReveal = 0;
+  state.votes = {};
+  state.currentVoter = 0;
+
+  state.players.forEach(p => { state.votes[p] = []; });
+
+  // Initialize scores for new players
+  state.players.forEach(p => {
+    if (!state.scores[p]) {
+      state.scores[p] = { pobede: 0, porazi: 0 };
+    }
+  });
+
+  showPassScreen();
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// ─── PASS SCREEN ──────────────────────────────────────────────
+function showPassScreen() {
+  const idx   = state.currentReveal;
+  const name  = state.revealOrder[idx];
+  const total = state.revealOrder.length;
+
+  document.getElementById('pass-player-name').textContent = name;
+  document.getElementById('pass-step-label').textContent  = `${idx + 1} / ${total}`;
+  document.getElementById('pass-progress').style.width    = `${((idx) / total) * 100}%`;
+
+  // Reset pass screen button to default
+  const passBtn = document.querySelector('#screen-pass .btn-primary');
+  passBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Prikaži moju reč`;
+  passBtn.onclick = () => showWordWithCountdown();
+
+  goTo('screen-pass');
+}
+
+// ─── COUNTDOWN BEFORE WORD REVEAL ────────────────────────────
+function showWordWithCountdown() {
+  ensureAudioCtx();
+  if (!state.countdownEnabled) { showWord(); return; }
+  const overlay = document.getElementById('countdown-overlay');
+  const numEl   = document.getElementById('count-num-display');
+  overlay.style.display = 'flex';
+
+  const counts = [3, 2, 1];
+  let i = 0;
+
+  function showNext() {
+    if (i >= counts.length) {
+      overlay.style.display = 'none';
+      showWord();
+      return;
+    }
+    // Restart animation
+    numEl.style.animation = 'none';
+    numEl.textContent = counts[i];
+    void numEl.offsetWidth; // reflow
+    numEl.style.animation = 'count-pop 0.4s ease forwards';
+    i++;
+    setTimeout(showNext, 700);
+  }
+
+  showNext();
+}
+
+// ─── WORD REVEAL ──────────────────────────────────────────────
+function showWord() {
+  const idx     = state.currentReveal;
+  const name    = state.revealOrder[idx];
+  // Determine if this player is an imposter
+  // revealOrder[idx] is a player name; find their index in state.players
+  const playerIdx = state.players.indexOf(name);
+  const isImp   = state.imposterIdxs.includes(playerIdx);
+  const wordEl  = document.getElementById('word-text');
+  const hintEl  = document.getElementById('word-hint');
+  const box     = document.getElementById('word-reveal-box');
+  const catEl   = document.getElementById('word-category-badge');
+  const nameEl  = document.getElementById('word-player-name');
+
+  nameEl.textContent = name;
+
+  if (isImp) {
+    wordEl.textContent = 'ULJEZ';
+    wordEl.className   = 'big-word imposter';
+    catEl.textContent  = 'Kategorija: ???';
+    if (state.hintEnabled) {
+      hintEl.textContent = `Prvo slovo: ${state.secretWord[0].toUpperCase()}`;
+    } else {
+      hintEl.textContent = 'Pažljivo slušaj i pretvori se da znaš reč!';
+    }
+  } else {
+    wordEl.textContent = state.secretWord.toUpperCase();
+    wordEl.className   = 'big-word real';
+    catEl.textContent  = `Kategorija: ${state.category}`;
+    hintEl.textContent = 'Zapamti reč — ne govori je naglas!';
+  }
+
+  box.classList.remove('pop');
+  void box.offsetWidth; // reflow
+  box.classList.add('pop');
+
+  playSound('reveal');
+  goTo('screen-word');
+}
+
+function hideWord() {
+  state.currentReveal++;
+  if (state.currentReveal < state.revealOrder.length) {
+    showPassScreen();
+  } else {
+    startDiscussion();
+  }
+}
+
+// ─── DISCUSSION ───────────────────────────────────────────────
+function startDiscussion() {
+  // Pick random starter
+  const starterIdx = Math.floor(Math.random() * state.players.length);
+  const starter = state.players[starterIdx];
+  document.getElementById('discussion-starter').textContent = starter;
+
+  // Render player list (highlight starter)
+  const container = document.getElementById('discussion-players');
+  container.innerHTML = '';
+  state.players.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'player-item';
+    const isStarter = i === starterIdx;
+    div.innerHTML = `
+      <div class="player-avatar" style="${isStarter ? 'border-color:var(--yellow);color:var(--yellow)' : ''}">${p.slice(0,2).toUpperCase()}</div>
+      <div class="player-name">${escHtml(p)}</div>`;
+    container.appendChild(div);
+  });
+
+  // Timer
+  const timerWrap = document.getElementById('timer-wrap');
+  if (state.timerEnabled) {
+    timerWrap.style.display = 'flex';
+    timerWrap.style.flexDirection = 'column';
+    timerWrap.style.alignItems = 'center';
+    startTimerCountdown(state.timerDuration);
+  } else {
+    timerWrap.style.display = 'none';
+    stopTimer();
+  }
+
+  goTo('screen-discussion');
+}
+
+let timerInterval = null;
+let timerLeft     = 0;
+let timerPaused   = false;
+
+function startTimerCountdown(seconds) {
+  clearInterval(timerInterval);
+  timerLeft   = seconds;
+  timerPaused = false;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    if (!timerPaused) {
+      timerLeft--;
+      updateTimerDisplay();
+      if (timerLeft <= 5 && timerLeft > 0) {
+        playSound('tick');
+        navigator.vibrate && navigator.vibrate(100);
+      }
+      if (timerLeft <= 0) {
+        clearInterval(timerInterval);
+        playSound('timerEnd');
+        navigator.vibrate && navigator.vibrate([300, 100, 300]);
+        goToVoting();
+      }
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el   = document.getElementById('timer-display');
+  const circ = document.getElementById('timer-circle');
+  const total = state.timerDuration;
+  const pct   = timerLeft / total;
+  const circumference = 2 * Math.PI * 68; // 427
+
+  el.textContent = timerLeft;
+  el.className = 'timer-number' + (timerLeft <= 10 ? ' urgent' : '');
+  circ.style.strokeDashoffset = circumference * (1 - pct);
+  circ.style.stroke = timerLeft <= 10 ? 'var(--red)' : (timerLeft <= 20 ? 'var(--yellow)' : 'var(--red)');
+}
+
+function toggleTimer() {
+  timerPaused = !timerPaused;
+  const btn = document.getElementById('timer-pause-btn');
+  if (timerPaused) {
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg> Nastavi`;
+  } else {
+    btn.innerHTML = `<svg id="timer-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pauza`;
+  }
+}
+
+function resetTimer() {
+  timerPaused = false;
+  startTimerCountdown(state.timerDuration);
+  document.getElementById('timer-pause-btn').innerHTML = `<svg id="timer-pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pauza`;
+}
+
+function stopTimer() { clearInterval(timerInterval); }
+
+// ─── VOTING ───────────────────────────────────────────────────
+function skipVoting() {
+  stopTimer();
+  state.votingSkipped = true;
+  endGame(false);
+}
+
+function goToVoting() {
+  stopTimer();
+  state.currentVoter = 0;
+  state.players.forEach(p => { state.votes[p] = []; });
+  renderVotingScreen();
+  goTo('screen-voting');
+}
+
+function renderVotingScreen() {
+  const voter = state.players[state.currentVoter];
+  const total = state.players.length;
+
+  document.getElementById('voting-subtitle').textContent = `Ko je po tvom mišljenju uljez?`;
+  document.getElementById('voting-round-label').textContent = `${voter} glasa — ${state.currentVoter + 1} od ${total}`;
+
+  const list = document.getElementById('voting-list');
+  list.innerHTML = '';
+
+  state.players.forEach((p) => {
+    if (p === voter) return; // can't vote for yourself
+    const item = document.createElement('div');
+    item.className = 'vote-item';
+    item.dataset.target = p;
+    item.innerHTML = `
+      <div class="vote-dot"></div>
+      <div class="player-avatar" style="width:32px;height:32px;font-size:0.7rem">${p.slice(0,2).toUpperCase()}</div>
+      <div class="vote-name">${escHtml(p)}</div>`;
+    item.onclick = () => selectVote(p);
+    list.appendChild(item);
+  });
+
+  const action = document.getElementById('voting-action');
+  action.innerHTML = `
+    <button id="confirm-vote-btn" class="btn btn-primary w-full" onclick="confirmVote()" disabled style="opacity:0.4">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Potvrdi glas
+    </button>`;
+
+  currentVoteSelection = null;
+}
+
+let currentVoteSelection = null;
+
+function selectVote(target) {
+  currentVoteSelection = target;
+  document.querySelectorAll('.vote-item').forEach(el => {
+    el.classList.toggle('selected', el.dataset.target === target);
+  });
+  const btn = document.getElementById('confirm-vote-btn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+
+function confirmVote() {
+  if (!currentVoteSelection) return;
+  state.votes[currentVoteSelection].push(state.players[state.currentVoter]);
+  state.currentVoter++;
+
+  if (state.currentVoter < state.players.length) {
+    showVotingPass();
+  } else {
+    tallyVotes();
+  }
+}
+
+function showVotingPass() {
+  const voter = state.players[state.currentVoter];
+  document.getElementById('pass-player-name').textContent = voter;
+  document.getElementById('pass-step-label').textContent  = `Glasanje ${state.currentVoter + 1} / ${state.players.length}`;
+  document.getElementById('pass-progress').style.width    = `${(state.currentVoter / state.players.length) * 100}%`;
+
+  const passBtn = document.querySelector('#screen-pass .btn-primary');
+  passBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg> Spreman/a sam, glasam`;
+  passBtn.onclick = () => {
+    passBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Prikaži moju reč`;
+    passBtn.onclick = () => showWordWithCountdown();
+    renderVotingScreen();
+    goTo('screen-voting');
+  };
+  goTo('screen-pass');
+}
+
+// ─── TALLY ────────────────────────────────────────────────────
+function tallyVotes() {
+  // Find player with most votes
+  let maxVotes = 0;
+  let topPlayer = null;
+
+  state.players.forEach(p => {
+    const v = state.votes[p].length;
+    if (v > maxVotes) { maxVotes = v; topPlayer = p; }
+  });
+
+  // Check if topPlayer is any of the impostors
+  const imposterNames = state.imposterIdxs.map(i => state.players[i]);
+  const guessedRight  = imposterNames.includes(topPlayer);
+
+  if (!guessedRight && state.guessEnabled) {
+    // Impostors survive — show guess screen for the voted-out player
+    // (voted-out player might want to guess, but original logic shows guess for imposter)
+    // Show guess screen — in multi-imposter mode we still use the same flow
+    document.getElementById('guess-category').textContent = state.category;
+    document.getElementById('guess-input').value = '';
+    goTo('screen-guess');
+  } else {
+    endGame(guessedRight);
+  }
+}
+
+// ─── GUESS ────────────────────────────────────────────────────
+function submitGuess() {
+  const guess = document.getElementById('guess-input').value.trim().toLowerCase();
+  const correct = state.secretWord.toLowerCase();
+  if (!guess) return;
+
+  const won = guess === correct ||
+    correct.includes(guess) ||
+    guess.includes(correct);
+
+  endGame(won ? 'imposter_guess' : false);
+}
+
+// ─── RESULTS ──────────────────────────────────────────────────
+function endGame(outcome) {
+  // outcome: true = crew wins (imposter caught)
+  //          'imposter_guess' = imposter guessed word (imposter wins)
+  //          false = imposter escapes (imposter wins)
+
+  const imposterNames = state.imposterIdxs.map(i => state.players[i]);
+  const imposterNamesStr = imposterNames.map(n => escHtml(n)).join(', ');
+
+  // Find who got most votes
+  let maxVotes = 0;
+  let votedOut = null;
+  state.players.forEach(p => {
+    const v = state.votes[p].length;
+    if (v > maxVotes) { maxVotes = v; votedOut = p; }
+  });
+
+  // Update scores
+  const crewWon = outcome === true;
+  const imposterWon = !crewWon;
+
+  state.players.forEach(p => {
+    if (!state.scores[p]) state.scores[p] = { pobede: 0, porazi: 0 };
+    const isImposter = imposterNames.includes(p);
+    if (isImposter) {
+      if (imposterWon) state.scores[p].pobede++;
+      else state.scores[p].porazi++;
+    } else {
+      if (crewWon) state.scores[p].pobede++;
+      else state.scores[p].porazi++;
+    }
+  });
+
+  // Play outcome sound
+  if (crewWon) {
+    playSound('win');
+  } else {
+    playSound('lose');
+  }
+
+  // Outcome card
+  const outEl = document.getElementById('result-outcome');
+  if (outcome === true) {
+    outEl.className = 'result-reveal win pop';
+    outEl.innerHTML = `
+      <div class="result-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="result-title win">Posada pobedila!</div>
+      <p style="color:var(--muted);font-size:0.9rem">Ispravno ste otkrili uljeza.</p>`;
+  } else if (outcome === 'imposter_guess') {
+    outEl.className = 'result-reveal lose pop';
+    outEl.innerHTML = `
+      <div class="result-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <div class="result-title lose">Uljez pobedio!</div>
+      <p style="color:var(--muted);font-size:0.9rem"><strong style="color:var(--pink)">${imposterNamesStr}</strong> je pogodio/la tajnu reč!</p>`;
+  } else {
+    outEl.className = 'result-reveal lose pop';
+    outEl.innerHTML = `
+      <div class="result-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <div class="result-title lose">Uljez pobedio!</div>
+      <p style="color:var(--muted);font-size:0.9rem"><strong style="color:var(--pink)">${imposterNamesStr}</strong> se izvukao neotkriven.</p>`;
+  }
+
+  // Vote breakdown
+  const breakdown = document.getElementById('vote-breakdown');
+  breakdown.innerHTML = '';
+  const totalVotes = state.players.length;
+  state.players.forEach(p => {
+    const v = state.votes[p].length;
+    const pct = totalVotes > 0 ? (v / totalVotes) * 100 : 0;
+    const isImp = imposterNames.includes(p);
+    const div = document.createElement('div');
+    div.className = 'vote-result-bar';
+    div.innerHTML = `
+      <div class="bar-name">${escHtml(p)}</div>
+      <div class="bar-track">
+        <div class="bar-fill${isImp ? ' imposter-bar' : ''}" style="width:${pct}%"></div>
+      </div>
+      <div class="bar-val">${v}</div>`;
+    breakdown.appendChild(div);
+  });
+
+  // Vote detail (ko je glasao za koga)
+  const voteDetailList = document.getElementById('vote-detail-list');
+  voteDetailList.innerHTML = '';
+  voteDetailList.style.display = 'none';
+  state.players.forEach(p => {
+    const voters = state.votes[p];
+    if (voters && voters.length > 0) {
+      const row = document.createElement('div');
+      row.className = 'vote-detail-row';
+      row.innerHTML = `<strong>Za ${escHtml(p)}:</strong> ${voters.map(v => escHtml(v)).join(', ')}`;
+      voteDetailList.appendChild(row);
+    }
+  });
+
+  document.getElementById('result-word').textContent     = state.secretWord;
+  document.getElementById('result-category').textContent = state.category;
+  document.getElementById('result-imposter').textContent = imposterNames.join(', ');
+
+  // Scoreboard
+  renderScoreboard();
+
+  // Show/hide sections based on whether voting was skipped
+  const skipped = !!state.votingSkipped;
+  document.getElementById('result-outcome').style.display      = skipped ? 'none' : '';
+  document.getElementById('result-votes-card').style.display   = skipped ? 'none' : '';
+  document.getElementById('result-scoreboard-card').style.display = skipped ? 'none' : '';
+  state.votingSkipped = false;
+
+  goTo('screen-results');
+}
+
+function toggleVoteDetail() {
+  const el = document.getElementById('vote-detail-list');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderScoreboard() {
+  const list = document.getElementById('scoreboard-list');
+  list.innerHTML = '';
+
+  // Find max wins for leader highlight
+  let maxWins = 0;
+  state.players.forEach(p => {
+    if (state.scores[p] && state.scores[p].pobede > maxWins) {
+      maxWins = state.scores[p].pobede;
+    }
+  });
+
+  state.players.forEach(p => {
+    const sc = state.scores[p] || { pobede: 0, porazi: 0 };
+    const isLeader = sc.pobede === maxWins && maxWins > 0;
+    const row = document.createElement('div');
+    row.className = 'score-row';
+    row.innerHTML = `
+      <div class="score-name">
+        ${isLeader ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="var(--yellow)" stroke="none" style="vertical-align:middle;margin-right:4px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' : ''}
+        ${escHtml(p)}
+      </div>
+      <div class="score-wins">${sc.pobede}</div>
+      <div class="score-losses">${sc.porazi}</div>`;
+    list.appendChild(row);
+  });
+}
+
+// ─── PLAY AGAIN ───────────────────────────────────────────────
+function playAgainSamePlayers() {
+  // Keep scores, keep players, reset runtime
+  state.votes = {};
+  startGame();
+}
+
+function newGameNewPlayers() {
+  // Reset scores when going to new setup with new players
+  state.scores = {};
+  state.players = [];
+  renderPlayerList();
+  goTo('screen-setup');
+}
+
+// ─── RESTART / HOME ──────────────────────────────────────────
+const GAME_SCREENS = ['screen-pass','screen-word','screen-discussion','screen-voting','screen-guess'];
+
+function updateRestartFab() {
+  const active = document.querySelector('.screen.active');
+  const fab = document.getElementById('restart-fab');
+  if (active && GAME_SCREENS.includes(active.id)) {
+    fab.style.display = 'flex';
+  } else {
+    fab.style.display = 'none';
+  }
+}
+
+function openRestartModal() {
+  document.getElementById('restart-modal').classList.add('open');
+}
+
+function closeRestartModal() {
+  document.getElementById('restart-modal').classList.remove('open');
+}
+
+function confirmRestart() {
+  closeRestartModal();
+  stopTimer();
+  goTo('screen-home');
+}
+
+// ─── HELPERS ─────────────────────────────────────────────────
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Prevent zoom on double tap
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 300) e.preventDefault();
+  lastTouchEnd = now;
+}, false);
+
+// ─── SERVICE WORKER ──────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+</body>
+</html>
